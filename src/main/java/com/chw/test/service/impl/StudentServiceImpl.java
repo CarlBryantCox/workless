@@ -7,6 +7,8 @@ import com.chw.test.dto.MenuDTO;
 import com.chw.test.dto.SchoolMenuVO;
 import com.chw.test.dto.SchoolVo;
 import com.chw.test.dto.response.MenuResponseDTO;
+import com.chw.test.dto.response.SchoolResponseDTO;
+import com.chw.test.dto.response.UserResponse;
 import com.chw.test.entity.Student;
 import com.chw.test.enums.IpAddr;
 import com.chw.test.mapper.StudentMapper;
@@ -41,6 +43,11 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
     private static String insertSchoolUrl = IpAddr.IP_ADDR.getValue()+"/v1/smart/smart-school-base/api/school/insertSchool";
 
     private static String menuUrl = IpAddr.IP_ADDR.getValue()+"/v1/smart/smart-school-base/api/menu/getParentMenu?platformId=6";
+
+    private static String getUserUrl = IpAddr.IP_ADDR.getValue()+"/v1/smart/smart-school-base/api/feign/user/phone/";
+
+    private static String getSchoolUrl = IpAddr.IP_ADDR.getValue()+"/v1/smart/smart-school-base/api/school/getSchoolById?schoolId=";
+
 
     @Resource
     private RestTemplate restTemplate;
@@ -116,6 +123,48 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
             }
         }
         return list;
+    }
+
+    @Override
+    public UserResponse getUserByPhone(String phone,String token) {
+        System.out.println(token);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization",token);
+        headers.set("Content-Type","application/json");
+        HttpEntity requestEntity = new HttpEntity(headers);
+        ResponseEntity<UserResponse> exchange;
+        try {
+            String url = getUserUrl+phone;
+            System.out.println(url);
+            exchange = restTemplate.exchange(url, HttpMethod.GET, requestEntity, UserResponse.class);
+        } catch (Exception e) {
+            log.info("请求查询用户接口失败：{}",e);
+            return null;
+        }
+        if(exchange==null){
+            return null;
+        }
+        return exchange.getBody();
+    }
+
+    @Override
+    public SchoolVo getSchool(Integer schoolId,String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization",token);
+        headers.set("Content-Type","application/json");
+        HttpEntity requestEntity = new HttpEntity(headers);
+        ResponseEntity<SchoolResponseDTO> exchange;
+        try {
+            String url = getSchoolUrl + schoolId;
+            exchange = restTemplate.exchange(url, HttpMethod.GET, requestEntity, SchoolResponseDTO.class);
+        } catch (Exception e) {
+            log.info("请求查询学校接口失败：{}",e);
+            return null;
+        }
+        if(exchange==null || exchange.getBody()==null){
+            return null;
+        }
+        return exchange.getBody().getData();
     }
 
 
