@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chw.test.mapper.ExamStudentMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.chw.test.entity.ExamStudent">
+        <id column="id" property="id" />
+        <result column="exam_id" property="examId" />
+        <result column="school_id" property="schoolId" />
+        <result column="school_name" property="schoolName" />
+        <result column="grade_id" property="gradeId" />
+        <result column="grade_name" property="gradeName" />
+        <result column="class_id" property="classId" />
+        <result column="class_name" property="className" />
+        <result column="student_id" property="studentId" />
+        <result column="student_name" property="studentName" />
+        <result column="student_number" property="studentNumber" />
+        <result column="exam_number" property="examNumber" />
+        <result column="student_type" property="studentType" />
+        <result column="subject_type_id" property="subjectTypeId" />
+        <result column="type_id" property="typeId" />
+        <result column="create_id" property="createId" />
+        <result column="create_time" property="createTime" />
+        <result column="modify_id" property="modifyId" />
+        <result column="modify_time" property="modifyTime" />
+    </resultMap>
+
+    <select id="getStudentList" resultType="com.chw.test.dto.StudentVO">
+        SELECT t1.id AS recordId,t2.student_name FROM
+bus_exam_subject_student t1
+INNER JOIN
+bus_exam_student t2
+ON t1.exam_student_id=t2.id
+WHERE t1.exam_id=#{examId} AND t1.subject_id=#{subjectId} AND t2.school_id=#{schoolId}
+
+    </select>
+
+</mapper>

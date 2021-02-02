@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chw.test.mapper.ExamSubjectStudentMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.chw.test.entity.ExamSubjectStudent">
+        <id column="id" property="id" />
+        <result column="exam_student_id" property="examStudentId" />
+        <result column="exam_id" property="examId" />
+        <result column="subject_id" property="subjectId" />
+        <result column="room_number" property="roomNumber" />
+        <result column="seat_number" property="seatNumber" />
+        <result column="scan_paper_id" property="scanPaperId" />
+        <result column="card_source_url" property="cardSourceUrl" />
+        <result column="paper_type" property="paperType" />
+        <result column="marking_count" property="markingCount" />
+        <result column="marking_status" property="markingStatus" />
+        <result column="objective_score" property="objectiveScore" />
+        <result column="subjective_score" property="subjectiveScore" />
+        <result column="correct_score" property="correctScore" />
+        <result column="create_time" property="createTime" />
+        <result column="modify_id" property="modifyId" />
+        <result column="modify_time" property="modifyTime" />
+    </resultMap>
+
+</mapper>

@@ -25,7 +25,7 @@ import java.util.Properties;
 public class CodeGenerator {
 
     private static final String configPath = "/src/main/resources/application.properties";
-    private static String[] tableName = new String[] {"area"};
+    private static String[] tableName = new String[] {"bus_exam_student"};
 
     private static String schema="yuejuan_data_screen";
 
