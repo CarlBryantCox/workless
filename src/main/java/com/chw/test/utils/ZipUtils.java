@@ -3,15 +3,89 @@ package com.chw.test.utils;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class ZipUtils {
 
     private static final int  BUFFER_SIZE = 2 * 1024;
+
+    /**
+     * 图片地址变压缩包
+     */
+    public static void imgUrlToZip(List<Map<String,String>> imgMapList, OutputStream out)throws RuntimeException {
+        long start = System.currentTimeMillis();
+        ZipOutputStream zos = null ;
+        try {
+            zos = new ZipOutputStream(out);
+            for (Map<String, String> imgMap : imgMapList) {
+                addImgMapToZos(imgMap,zos);
+            }
+            long end = System.currentTimeMillis();
+            System.out.println("压缩完成，耗时：" + (end - start) +" ms");
+        } catch (Exception e) {
+            throw new RuntimeException("zip error from ZipUtils",e);
+        }finally{
+            if(zos != null){
+                try {
+                    zos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * 图片地址变压缩包
+     */
+    public static void imgUrlToZip(Map<String,String> imgMap, OutputStream out)throws RuntimeException {
+        long start = System.currentTimeMillis();
+        ZipOutputStream zos = null ;
+        try {
+            zos = new ZipOutputStream(out);
+            addImgMapToZos(imgMap,zos);
+            long end = System.currentTimeMillis();
+            System.out.println("压缩完成，耗时：" + (end - start) +" ms");
+        } catch (Exception e) {
+            throw new RuntimeException("zip error from ZipUtils",e);
+        }finally{
+            if(zos != null){
+                try {
+                    zos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private static void addImgMapToZos(Map<String,String> imgMap,ZipOutputStream zos) throws IOException {
+        for(Map.Entry<String, String> it : imgMap.entrySet()){
+            zos.putNextEntry(new ZipEntry(it.getKey()));
+            writeInputStreamToZipOutputStream(getImageStream(it.getValue()),zos);
+            zos.closeEntry();
+        }
+    }
+
+    /**
+     * 获取网络图片流
+     */
+    public static InputStream getImageStream(String url) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.setReadTimeout(5000);
+        connection.setConnectTimeout(5000);
+        connection.setRequestMethod("GET");
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            return connection.getInputStream();
+        }
+        throw new RuntimeException("Invalid URL");
+    }
 
     /**
      * 功能描述:获取图片流
@@ -130,9 +204,15 @@ public class ZipUtils {
      * copy文件到zip输出流中
      */
     private static void writeFileToZipOutputStream(File sourceFile, ZipOutputStream zos) throws IOException {
+        writeInputStreamToZipOutputStream(new FileInputStream(sourceFile),zos);
+    }
+
+    /**
+     * copy文件到zip输出流中
+     */
+    private static void writeInputStreamToZipOutputStream(InputStream in, ZipOutputStream zos) throws IOException {
         byte[] buf = new byte[BUFFER_SIZE];
         int len;
-        FileInputStream in = new FileInputStream(sourceFile);
         while ((len = in.read(buf)) != -1){
             zos.write(buf, 0, len);
         }
@@ -140,14 +220,19 @@ public class ZipUtils {
     }
 
     public static void main(String[] args) throws Exception{
-        FileOutputStream fos1 = new FileOutputStream(new File("D:\\upload\\mytest01.zip"));
-        ZipUtils.toZip("D:\\data", fos1,true);
+//        FileOutputStream fos1 = new FileOutputStream(new File("D:\\upload\\mytest01.zip"));
+//        ZipUtils.toZip("D:\\data", fos1,true);
+//
+//        List<File> fileList = new ArrayList<>();
+//        fileList.add(new File("C:\\Users\\Administrator\\Desktop\\前端ip.txt"));
+//        fileList.add(new File("C:\\Users\\Administrator\\Desktop\\sql优化.txt"));
+//        FileOutputStream fos2 = new FileOutputStream(new File("D:\\upload\\mytest02.zip"));
+//        ZipUtils.toZip(fileList, fos2);
 
-        List<File> fileList = new ArrayList<>();
-        fileList.add(new File("C:\\Users\\Administrator\\Desktop\\前端ip.txt"));
-        fileList.add(new File("C:\\Users\\Administrator\\Desktop\\sql优化.txt"));
-        FileOutputStream fos2 = new FileOutputStream(new File("D:\\upload\\mytest02.zip"));
-        ZipUtils.toZip(fileList, fos2);
+        FileOutputStream fos3 = new FileOutputStream(new File("D:\\upload\\mytest03.zip"));
+        Map<String,String> map = new HashMap<>();
+        map.put("one.jpg","https://jty-yue-juan.oss-cn-beijing.aliyuncs.com/scanimages/2a12220c34464b0b83ac09f85bb50b1a/22.jpg?Expires=1927349971&OSSAccessKeyId=LTAINPdmg9GsW51l&Signature=ebvJtPWE%2B1zj11lUtxS55xhn%2B%2Bg%3D");
+        ZipUtils.imgUrlToZip(map,fos3);
     }
 
 
