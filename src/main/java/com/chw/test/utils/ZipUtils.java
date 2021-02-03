@@ -229,10 +229,6 @@ public class ZipUtils {
 //        FileOutputStream fos2 = new FileOutputStream(new File("D:\\upload\\mytest02.zip"));
 //        ZipUtils.toZip(fileList, fos2);
 
-        FileOutputStream fos3 = new FileOutputStream(new File("D:\\upload\\mytest03.zip"));
-        Map<String,String> map = new HashMap<>();
-        map.put("one.jpg","https://jty-yue-juan.oss-cn-beijing.aliyuncs.com/scanimages/2a12220c34464b0b83ac09f85bb50b1a/22.jpg?Expires=1927349971&OSSAccessKeyId=LTAINPdmg9GsW51l&Signature=ebvJtPWE%2B1zj11lUtxS55xhn%2B%2Bg%3D");
-        ZipUtils.imgUrlToZip(map,fos3);
     }
 
 
