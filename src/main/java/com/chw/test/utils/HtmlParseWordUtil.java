@@ -1,10 +1,11 @@
 package com.chw.test.utils;
 
 
+import com.deepoove.poi.XWPFTemplate;
+import com.deepoove.poi.xwpf.NiceXWPFDocument;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.jsoup.Jsoup;
@@ -13,41 +14,60 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class HtmlParseWordUtil {
 
     public static void main(String[] args) throws Exception{
 
-        XWPFDocument doc = new XWPFDocument();
-        XWPFParagraph paragraph = doc.createParagraph();
+        //XWPFDocument doc = new XWPFDocument(new FileInputStream("hello.docx"));
+        //XWPFDocument doc = new XWPFDocument();
 
-        String html = "<p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\">写一写。</span></p><p class=\"a DocDefaults \" style=\"text-align: center;margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\">电</span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">电的用处可大啦！有了电，电灯就会亮，还可以看电视</span>、<span class=\"\" style=\"\">听音乐。爸爸说，有了电，工人叔叔会生产出许多东西，我们的生活会更好。</span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">（1）选择正确的音节。</span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">就（jiù&nbsp; jìu）________叔（shū&nbsp; sū）________&nbsp;&nbsp;&nbsp;&nbsp;许（xǔ&nbsp;&nbsp; qǔ）________</span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">（2）这一段话共有________句。</span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">（3）从这一段话中我知道________。</span></span></p>";
-        //String html = "<div>my gold <span>you</span><p><span></span></p>just</div>";
-        //String html = "<p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"></span><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">这类题目是考查学生的课外阅读理解能力。第一题考查学生对拼音的掌握，就，读作jiù，叔，一种身份，许，许多。这一段一共3句话，从这段话中我知道：电的用处可大啦！</span></span></p>";
-        //String html = "<p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"></span><span class=\"a0 \" style=\"color: #000000;;white-space:pre-wrap;\">小小调音师。 </span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">&nbsp;&nbsp;&nbsp; </span><span class=\"\" style=\"font-family: 'MS Gothic';\">“</span><span class=\"\" style=\"\">长</span><span class=\"\" style=\"font-family: 'MS Gothic';\">”</span><span class=\"\" style=\"\">有两个读音：</span><span class=\"\" style=\"font-family: 'MS Gothic';\">①</span><span class=\"\" style=\"\">读________时，可以组词为________；</span><span class=\"\" style=\"font-family: 'MS Gothic';\">②</span><span class=\"\" style=\"\">读________时</span>，<span class=\"\" style=\"\">可以组词为________。</span></span></p>";
-        //String html = "<p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"\" style=\"white-space:pre-wrap;\">动物尾巴的妙用。先连线，再照样子写一写。 </span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;;white-space:pre-wrap;\"> </span><span class=\"a0 \" style=\"\"><img height=\"40\" id=\"rId11\" src=\"http://jty-question-2.oss-cn-beijing.aliyuncs.com/images/2020/2020-11-27/160648604576519259069.jpeg\" style=\"width:56.4pt;height:40.1pt;visibility:visible;mso-wrap-style:square\" width=\"56\"></span><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">________&nbsp;&nbsp;&nbsp; 掌握方向</span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;;white-space:pre-wrap;\"> </span><span class=\"a0 \" style=\"\"><img height=\"29\" id=\"rId12\" src=\"http://jty-question-2.oss-cn-beijing.aliyuncs.com/images/2020/2020-11-27/160648604580357010735.jpeg\" style=\"width:44.15pt;height:28.55pt;visibility:visible;mso-wrap-style:square\" width=\"44\"></span><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 表现喜怒哀乐</span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;;white-space:pre-wrap;\"> </span><span class=\"a0 \" style=\"\"><img height=\"33\" id=\"rId13\" src=\"http://jty-question-2.oss-cn-beijing.aliyuncs.com/images/2020/2020-11-27/160648604583390493148.jpeg\" style=\"width:42.8pt;height:33.3pt;visibility:visible;mso-wrap-style:square\" width=\"43\"></span><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">________&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;赶走苍蝇和蚊子</span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">例：谁的尾巴像耳朵?小鱼的尾巴像耳朵。</span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">谁的尾巴像________?________的尾巴像________。</span></span></p>";
-        //String html = "<p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"\" style=\"white-space:pre-wrap;\">读一读，回答问题。 </span></span></p><p class=\"a DocDefaults \" style=\"text-align: center;margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\">动物尾巴</span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">&nbsp;&nbsp;&nbsp; 金鱼尾巴左右摆，游来游去多自在。牛的尾巴来回摆，苍蝇蚊子不敢来。小猴尾巴卷树枝，倒着身子往下挂。燕子尾巴像剪刀，飞行方向把握好。</span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"white-space:pre-wrap;\">（1）找出儿歌中的两对意思相反的词。 </span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"white-space:pre-wrap;\">（2）儿歌中写了哪几种动物的尾巴?用横线画一画。 </span></span></p>";
+//        doc.createParagraph().createRun().setText("hello");
+//        doc.createParagraph().createRun().setText("word");
 
-        //Document parse = Jsoup.parse(html);
+        /*
+         * 设置分割线
 
-        Document parse = Jsoup.parse(new File("index.html"), "UTF-8");
+        CTBody ctBody = doc.getDocument().getBody();
+        CTSectPr section = ctBody.isSetSectPr() ? ctBody.getSectPr() : ctBody.addNewSectPr();
+        CTColumns columns = section.isSetCols() ? section.getCols() : section.addNewCols();
+        columns.setNum(BigInteger.valueOf(2));
+        columns.setSep(STOnOff.Enum.forInt(1));
+        */
 
-        Element body = parse.body();
+        String html1 = "<p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\">写一写。</span></p><p class=\"a DocDefaults \" style=\"text-align: center;margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\">电</span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">电的用处可大啦！有了电，电灯就会亮，还可以看电视</span>、<span class=\"\" style=\"\">听音乐。爸爸说，有了电，工人叔叔会生产出许多东西，我们的生活会更好。</span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">（1）选择正确的音节。</span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">就（jiù&nbsp; jìu）________叔（shū&nbsp; sū）________&nbsp;&nbsp;&nbsp;&nbsp;许（xǔ&nbsp;&nbsp; qǔ）________</span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">（2）这一段话共有________句。</span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">（3）从这一段话中我知道________。</span></span></p>";
+        String html2 = "<div>my gold <span>you</span><p><span></span></p>just</div>";
+        String html3 = "<p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"></span><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">这类题目是考查学生的课外阅读理解能力。第一题考查学生对拼音的掌握，就，读作jiù，叔，一种身份，许，许多。这一段一共3句话，从这段话中我知道：电的用处可大啦！</span></span></p>";
+        String html4 = "<p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"></span><span class=\"a0 \" style=\"color: #000000;;white-space:pre-wrap;\">小小调音师。 </span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">&nbsp;&nbsp;&nbsp; </span><span class=\"\" style=\"font-family: 'MS Gothic';\">“</span><span class=\"\" style=\"\">长</span><span class=\"\" style=\"font-family: 'MS Gothic';\">”</span><span class=\"\" style=\"\">有两个读音：</span><span class=\"\" style=\"font-family: 'MS Gothic';\">①</span><span class=\"\" style=\"\">读________时，可以组词为________；</span><span class=\"\" style=\"font-family: 'MS Gothic';\">②</span><span class=\"\" style=\"\">读________时</span>，<span class=\"\" style=\"\">可以组词为________。</span></span></p>";
+        String html5 = "<p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"\" style=\"white-space:pre-wrap;\">动物尾巴的妙用。先连线，再照样子写一写。 </span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;;white-space:pre-wrap;\"> </span><span class=\"a0 \" style=\"\"><img height=\"40\" id=\"rId11\" src=\"http://jty-question-2.oss-cn-beijing.aliyuncs.com/images/2020/2020-11-27/160648604576519259069.jpeg\" style=\"width:56.4pt;height:40.1pt;visibility:visible;mso-wrap-style:square\" width=\"56\"></span><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">________&nbsp;&nbsp;&nbsp; 掌握方向</span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;;white-space:pre-wrap;\"> </span><span class=\"a0 \" style=\"\"><img height=\"29\" id=\"rId12\" src=\"http://jty-question-2.oss-cn-beijing.aliyuncs.com/images/2020/2020-11-27/160648604580357010735.jpeg\" style=\"width:44.15pt;height:28.55pt;visibility:visible;mso-wrap-style:square\" width=\"44\"></span><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 表现喜怒哀乐</span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;;white-space:pre-wrap;\"> </span><span class=\"a0 \" style=\"\"><img height=\"33\" id=\"rId13\" src=\"http://jty-question-2.oss-cn-beijing.aliyuncs.com/images/2020/2020-11-27/160648604583390493148.jpeg\" style=\"width:42.8pt;height:33.3pt;visibility:visible;mso-wrap-style:square\" width=\"43\"></span><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">________&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;赶走苍蝇和蚊子</span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">例：谁的尾巴像耳朵?小鱼的尾巴像耳朵。</span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">谁的尾巴像________?________的尾巴像________。</span></span></p>";
+        String html6 = "<p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"\" style=\"white-space:pre-wrap;\">读一读，回答问题。 </span></span></p><p class=\"a DocDefaults \" style=\"text-align: center;margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\">动物尾巴</span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"\">&nbsp;&nbsp;&nbsp; 金鱼尾巴左右摆，游来游去多自在。牛的尾巴来回摆，苍蝇蚊子不敢来。小猴尾巴卷树枝，倒着身子往下挂。燕子尾巴像剪刀，飞行方向把握好。</span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"white-space:pre-wrap;\">（1）找出儿歌中的两对意思相反的词。 </span></span></p><p class=\"a DocDefaults \" style=\"margin-bottom: 0in;\"><span class=\"a0 \" style=\"color: #000000;\"><span class=\"\" style=\"white-space:pre-wrap;\">（2）儿歌中写了哪几种动物的尾巴?用横线画一画。 </span></span></p>";
 
-        System.out.println(body);
 
-        addElementToParagraph(new ElementToParagraphParam(paragraph,body));
+        XWPFTemplate template = XWPFTemplate.compile("template.docx").render(
+                new HashMap<String, Object>(){{
+                    put("title", "Hi, poi-tl Word模板引擎");
+                    put("score",150);
+                    put("count",15);
+                    put("serial","A10001");
+                }});
+        NiceXWPFDocument document = template.getXWPFDocument();
 
-        FileOutputStream out = new FileOutputStream("simple.docx");
-        doc.write(out);
+        List<String> strings = Arrays.asList(html1, html2, html3, html4, html5, html6);
+        for (String string : strings) {
+            Document parse = Jsoup.parse(string);
+            XWPFParagraph paragraph = document.createParagraph();
+            addElementToParagraph(new ElementToParagraphParam(paragraph,parse.body()));
+        }
+
+        template.writeAndClose(new FileOutputStream("output.docx"));
 
     }
 
