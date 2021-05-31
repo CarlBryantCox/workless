@@ -119,5 +119,16 @@
             <artifactId>java-sizeof</artifactId>
             <version>0.0.5</version>
         </dependency>
+        <!--word转pdf 格式有差异-->
+        <dependency>
+            <groupId>fr.opensagres.xdocreport</groupId>
+            <artifactId>fr.opensagres.poi.xwpf.converter.pdf-gae</artifactId>
+            <version>2.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>e-iceblue</groupId>
+            <artifactId>spire.doc.free</artifactId>
+            <version>3.9.0</version>
+        </dependency>
     </dependencies>
 </project>

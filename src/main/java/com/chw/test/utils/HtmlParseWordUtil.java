@@ -3,6 +3,8 @@ package com.chw.test.utils;
 
 import com.deepoove.poi.XWPFTemplate;
 import com.deepoove.poi.xwpf.NiceXWPFDocument;
+import fr.opensagres.poi.xwpf.converter.pdf.PdfConverter;
+import fr.opensagres.poi.xwpf.converter.pdf.PdfOptions;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
@@ -67,7 +69,21 @@ public class HtmlParseWordUtil {
             addElementToParagraph(new ElementToParagraphParam(paragraph,parse.body()));
         }
 
-        template.writeAndClose(new FileOutputStream("output.docx"));
+        //template.writeAndClose(new FileOutputStream("output.docx"));
+
+        FileOutputStream out = new FileOutputStream("simple.docx");
+        document.write(out);
+
+        /*
+         * word转pdf格式会改变
+        FileOutputStream fileOutputStream = new FileOutputStream("wsh.pdf");
+        PdfConverter.getInstance().convert(document,fileOutputStream, PdfOptions.create());
+        fileOutputStream.close();
+        */
+
+
+
+
 
     }
 
